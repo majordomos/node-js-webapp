@@ -113,5 +113,5 @@ app.put("/api/links", jsonParser, function(request, response){
 });
 
 app.listen(3000, function(){
-    console.log("Сервер ожидание подключения");
+    console.log("Connected");
 });
