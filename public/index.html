@@ -48,8 +48,8 @@
                 tr.append(ratingTd);
                 
                 const linksTd = document.createElement("td");
+              //edit link button
 
-                //edit link button
                 const editLink = document.createElement("a");
                 editLink.setAttribute("data-id", link.id);
                 editLink.setAttribute("style", "cursor:pointer;padding:15px;");
@@ -62,6 +62,7 @@
                 linksTd.append(editLink);
 
                 //remove link button
+
                 const removeLink = document.createElement("a");
                 removeLink.setAttribute("data-id", link.id);
                 removeLink.setAttribute("style", "cursor:pointer;padding:15px;");
@@ -78,6 +79,7 @@
                 //add rating
 
                 //decrease rating
+
     
                 return tr;
             }
@@ -99,6 +101,7 @@
             }
 
             //get one link
+
             async function GetLink(id){
                 const response = await fetch("/api/links/" + id, {
                     method: "GET",
@@ -115,6 +118,7 @@
             }
 
             //add link
+
             GetLinks();
         </script>
     </body>
