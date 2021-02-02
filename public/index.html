@@ -48,7 +48,8 @@
                 tr.append(ratingTd);
                 
                 const linksTd = document.createElement("td");
-    
+              //edit link button
+
                 const editLink = document.createElement("a");
                 editLink.setAttribute("data-id", link.id);
                 editLink.setAttribute("style", "cursor:pointer;padding:15px;");
@@ -59,7 +60,9 @@
                     GetLink(link.id);
                 });
                 linksTd.append(editLink);
-    
+
+                //remove link button
+
                 const removeLink = document.createElement("a");
                 removeLink.setAttribute("data-id", link.id);
                 removeLink.setAttribute("style", "cursor:pointer;padding:15px;");
@@ -72,6 +75,11 @@
     
                 linksTd.append(removeLink);
                 tr.appendChild(linksTd);
+
+                //add rating
+
+                //decrease rating
+
     
                 return tr;
             }
@@ -93,7 +101,24 @@
             }
 
             //get one link
-            
+
+            async function GetLink(id){
+                const response = await fetch("/api/links/" + id, {
+                    method: "GET",
+                    headers: { "Accept": "application/json" }
+                });
+                if (response.ok == true){
+                    const link = await response.json();
+                    const form = document.forms["linkForm"];
+                    form.elements["id"].value = link.id;
+                    form.elements["link"].value = link.link;
+                    form.elements["rating"].value = link.rating;
+
+                }
+            }
+
+            //add link
+
             GetLinks();
         </script>
     </body>
