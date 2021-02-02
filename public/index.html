@@ -178,7 +178,19 @@
                 if (response.ok == true){
                     const link = await response.json();
                     reset();
-                    document.querySelector("tr[data-rowid=`" + link.id + "`]").replaceWith(row(link));
+                    document.querySelector("tr[data-rowid='" + link.id + "']").replaceWith(row(link));
+                }
+            }
+
+            //remove link function
+            async function RemoveLInk(id){
+                const response = await fetch("/api/links", {
+                    method: "DELETE",
+                    headers: {"Accept": "application/json" }
+                });
+                if (response.ok == true){
+                    const link = await response.json();
+                    document.querySelector("tr[data-rowid='" + link.id + "']").remove();
                 }
             }
             GetLinks();
