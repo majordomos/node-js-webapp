@@ -84,6 +84,34 @@
                 return tr;
             }
 
+            //reset function
+            function reset(){
+                const form = document.forms["linkForm"];
+                form.reset();
+                form.elements["id"].value = 0;
+            }
+
+            //reset form data
+            document.getElementById("reset").click(function (e){
+                e.preventDefault();
+                reset();
+            })
+
+            document.forms["linkForm"].addEventListener("submit", e => {
+                e.preventDefault();
+                const form = document.forms["linkForm"];
+                const id = form.elements["id"].value;
+                const link = form.elements["link"].value;
+                const rating = form.elements["rating"].value;
+                if (id == 0){
+                    CreateLink(link, rating);
+                }
+                else{
+                    //EditLink(id, link, rating);
+                }
+                
+            })
+
             //get all links
             async function GetLinks(){
                 const response = await fetch("/api/links", {
@@ -118,6 +146,21 @@
             }
 
             //add link
+            async function CreateLink(linkLink, linkRating) {
+                const response = await fetch("/api/links", {
+                    method: "POST",
+                    headers: { "Accept": "application/json", "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                        link: linkLink,
+                        rating: parseInt(linkRating, 10)
+                    })
+                });
+                if (response.ok == true){
+                    const link = await response.json();
+                    reset();
+                    document.querySelector("tbody").append(row(link));
+                }
+            }
 
             GetLinks();
         </script>
