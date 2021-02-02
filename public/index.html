@@ -30,6 +30,7 @@
             </tbody>
         </table>
         <script>
+            /*
             //function for 1 row
             function row(link) {
                 const tr = document.createElement("tr");
@@ -110,7 +111,7 @@
                     //EditLink(id, link, rating);
                 }
                 
-            })
+            }) */
 
             //get all links
             async function GetLinks(){
@@ -162,6 +163,24 @@
                 }
             }
 
+            //edit link function
+            async function EditLink(linkId, linkLink, linkRating){
+                const response = await fetch("/api/links", {
+                    method: "PUT",
+                    headers: {"Accept": "application/json", "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                        id: linkId,
+                        link: linkLink,
+                        rating: parseInt(linkRating, 10)
+                    })
+                });
+
+                if (response.ok == true){
+                    const link = await response.json();
+                    reset();
+                    document.querySelector("tr[data-rowid=`" + link.id + "`]").replaceWith(row(link));
+                }
+            }
             GetLinks();
         </script>
     </body>
