@@ -30,71 +30,7 @@
             </tbody>
         </table>
         <script>
-            //function for 1 row
-            function row(link) {
-                const tr = document.createElement("tr");
-                tr.setAttribute("data-rowid", link.id);
-  
-                const idTd = document.createElement("td");
-                idTd.append(link.id);
-                tr.append(idTd);
-    
-                const linkTd = document.createElement("td");
-                linkTd.append(link.link);
-                tr.append(linkTd);
-    
-                const ratingTd = document.createElement("td");
-                ratingTd.append(link.rating);
-                tr.append(ratingTd);
-                
-                const linksTd = document.createElement("td");
-    
-                const editLink = document.createElement("a");
-                editLink.setAttribute("data-id", link.id);
-                editLink.setAttribute("style", "cursor:pointer;padding:15px;");
-                editLink.append("Изменить");
-                editLink.addEventListener("click", e => {
-    
-                    e.preventDefault();
-                    GetLink(link.id);
-                });
-                linksTd.append(editLink);
-    
-                const removeLink = document.createElement("a");
-                removeLink.setAttribute("data-id", link.id);
-                removeLink.setAttribute("style", "cursor:pointer;padding:15px;");
-                removeLink.append("Удалить");
-                removeLink.addEventListener("click", e => {
-    
-                    e.preventDefault();
-                    DeleteLink(link.id);
-                });
-    
-                linksTd.append(removeLink);
-                tr.appendChild(linksTd);
-    
-                return tr;
-            }
-
-            //get all links
-            async function GetLinks(){
-                const response = await fetch("/api/links", {
-                    method: "GET",
-                    headers: { "Accept": "application/json"}
-                });
-
-                if (response.ok == true){
-                    const links = await response.json();
-                    let rows = document.querySelector("tbody");
-                    links.forEach(link => {
-                        rows.append(row(link));
-                    });
-                }
-            }
-
-            //get one link
             
-            GetLinks();
         </script>
     </body>
 </html>
