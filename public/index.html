@@ -73,7 +73,14 @@
                     })
                 });
                 if (response.ok == true){
-                    const link = await response.json();
+                    var link = await response.json();
+                    console.log("1 " + link);
+                    console.log("2 " + link.id + link.link + link.rating);
+                    for (var i=0; i<link.length; i++){
+                        if (link[i].link == linkLink && link[i].rating == linkRating){
+                            link = link[i];
+                        }
+                    }
                     reset();
                     document.querySelector("tbody").append(row(link));
                 }
@@ -194,6 +201,9 @@
                 }
                 
             })
+
+
+            
 
 
             getLinks();

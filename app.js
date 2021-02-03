@@ -40,13 +40,14 @@ app.get("/api/links/:id", function(request, response){
     }
 });
 
-app.get("/api/links", jsonParser, function(request, response){
+app.post("/api/links", jsonParser, function(request, response){
     if (!request.body) return response.sendStatus(400);
 
     const userLink = request.body.link;
     const userRating = request.body.rating;
-
+    console.log("3 - " + userLink + " - " + userRating);
     let link = {link: userLink, rating: userRating};
+    console.log("4 - " + link);
 
     let data = fs.readFileSync(filePath, "utf8");
     let links = JSON.parse(data);
@@ -55,7 +56,7 @@ app.get("/api/links", jsonParser, function(request, response){
     link.id = id+1;
     links.push(link);
     
-    data = JSON.stringify(links);z
+    data = JSON.stringify(links);
     fs.writeFileSync("links.json", data);
     response.send(links);
 });
