@@ -100,7 +100,7 @@
 
             //delete link function
             async function deleteLink(id){
-                const response = await fetch("/api/links", {
+                const response = await fetch("/api/links/"+id, {
                     method: "DELETE",
                     headers: {"Accept": "application/json" }
                 });
