@@ -10,14 +10,16 @@ app.use(express.static(__dirname + "/public"));
 const filePath = "links.json";
 
 app.get("/api/links", function(request, response){
-    
+
+    const filePath = "links.json";
     const content = fs.readFileSync(filePath, "utf8");
     const links = JSON.parse(content);
     response.send(links);
 });
 
-app.get("api/links/:id", function(request, response){
-
+app.get("/api/links/:id", function(request, response){
+    
+    filepath = "links.json";
     const id = request.params["id"];
     const content = fs.readFileSync(filePath, "utf8");
     const links = JSON.parse(content);
@@ -38,13 +40,14 @@ app.get("api/links/:id", function(request, response){
     }
 });
 
-app.get("/api/links", jsonParser, function(request, response){
+app.post("/api/links", jsonParser, function(request, response){
     if (!request.body) return response.sendStatus(400);
 
     const userLink = request.body.link;
     const userRating = request.body.rating;
-
+    console.log("3 - " + userLink + " - " + userRating);
     let link = {link: userLink, rating: userRating};
+    console.log("4 - " + link);
 
     let data = fs.readFileSync(filePath, "utf8");
     let links = JSON.parse(data);
@@ -59,7 +62,7 @@ app.get("/api/links", jsonParser, function(request, response){
 });
 
 app.delete("/api/links/:id", function(request, response){
-
+    const filepath = "links.json";
     const id = request.params.id;
     let data = fs.readFileSync(filepath, "utf8");
     let links = JSON.parse(data);

@@ -73,7 +73,14 @@
                     })
                 });
                 if (response.ok == true){
-                    const link = await response.json();
+                    var link = await response.json();
+                    console.log("1 " + link);
+                    console.log("2 " + link.id + link.link + link.rating);
+                    for (var i=0; i<link.length; i++){
+                        if (link[i].link == linkLink && link[i].rating == linkRating){
+                            link = link[i];
+                        }
+                    }
                     reset();
                     document.querySelector("tbody").append(row(link));
                 }
@@ -100,7 +107,7 @@
 
             //delete link function
             async function deleteLink(id){
-                const response = await fetch("/api/links", {
+                const response = await fetch("/api/links/"+id, {
                     method: "DELETE",
                     headers: {"Accept": "application/json" }
                 });
@@ -128,7 +135,11 @@
                 tr.append(idTd);
     
                 const linkTd = document.createElement("td");
-                linkTd.append(link.link);
+                const linkHref = document.createElement("a");
+                linkHref.append(link.link);
+                linkHref.href = link.link;
+                linkHref.target = "_blank";
+                linkTd.appendChild(linkHref);
                 tr.append(linkTd);
     
                 const ratingTd = document.createElement("td");
@@ -194,6 +205,9 @@
                 }
                 
             })
+
+
+            
 
 
             getLinks();
