@@ -85,6 +85,28 @@ app.delete("/api/links/:id", function (request, response) {
     }
 });
 
+app.put("/api/links/:id", jsonParser, function(request, response){
+    const filepath = "links.json";
+    const id = request.params["id"];
+
+    let data = fs.readFileSync(filePath, "utf8");
+    const links = JSON.parse(data);
+    let link;
+    for (var i = 0; i < links.length; i++) {
+        if (links[i].id == id) {
+            link = links[i];
+            break;
+        }
+    }
+    if (link){
+        link.rating += 1;
+        data = JSON.parse(links);
+        fs.writeFileSync(filePath, data);
+        response.send(link);
+    }
+});
+
+
 app.put("/api/links", jsonParser, function (request, response) {
     if (!request.body) { return request.sendStatus(400); }
 
@@ -111,7 +133,7 @@ app.put("/api/links", jsonParser, function (request, response) {
             fs.writeFileSync("links.json", data);
             response.send(link);
         }
-        else{
+        else {
             link.link = userLink;
             data = JSON.stringify(links);
             fs.writeFileSync("links.json", data);
