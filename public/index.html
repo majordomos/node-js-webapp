@@ -1,216 +1,283 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <title>Список ссылок</title>
-        <meta charset="utf-8" />
-        <meta name="viewport" content="width=device-width" />
-        <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet" />
-    </head>
-    <body>
-        <h2>Список ссылок</h2>
-        <form name="linkForm">
-            <input type="hidden" name="id" value="0" />
-            <div class="form-group">
-                <label for="link">Ссылка: </label>
-                <input class="form-control" name="link" />
-            </div>
-            <div class="form-group">
-                <label for="rating">Рейтинг:</label>
-                <input class="form-control" name="rating" />
-            </div>
-            <div class="panel-body">
-                <button type="submit" class="btn btn-sm btn-primary">Сохранить</button>
-                <a id="reset" class="btn btn-sm btn-primary">Сбросить</a>
-            </div>
-        </form>
-        <table class="table table-condensed table-striped table-bordered">
-            <thead><tr><th>Id</th><th>Ссылка</th><th>Рейтинг</th><th></th></tr></thead>
-            <tbody>
 
-            </tbody>
-        </table>
-        <script>
-            //get all links
-            async function getLinks(){
-                const response = await fetch("/api/links", {
-                    method: "GET",
-                    headers: { "Accept": "application/json"}
+<head>
+    <title>Список ссылок</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width" />
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet" />
+</head>
+
+<body>
+    <h2>Список ссылок</h2>
+    <form name="searchForm">
+        <div class="form-group">
+            <labe for="search">Поиск:</labe>
+            <input class="form-control" name="search" />
+        </div>
+    </form>
+    <form name="linkForm">
+        <input type="hidden" name="id" value="0" />
+        <div class="form-group">
+            <label for="link">Ссылка: </label>
+            <input class="form-control" name="link" />
+        </div>
+        <div class="form-group">
+            <label for="rating">Рейтинг:</label>
+            <input class="form-control" name="rating" />
+        </div>
+        <div class="panel-body">
+            <button type="submit" class="btn btn-sm btn-primary">Сохранить</button>
+            <a id="reset" class="btn btn-sm btn-primary">Сбросить</a>
+        </div>
+    </form>
+    <table class="table table-condensed table-striped table-bordered">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Ссылка</th>
+                <th>Рейтинг</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+
+        </tbody>
+    </table>
+    <script>
+        //get all links
+        async function getLinks() {
+            const response = await fetch("/api/links", {
+                method: "GET",
+                headers: { "Accept": "application/json" }
+            });
+
+            if (response.ok == true) {
+                const links = await response.json();
+                let rows = document.querySelector("tbody");
+                links.forEach(link => {
+                    rows.append(row(link));
                 });
-
-                if (response.ok == true){
-                    const links = await response.json();
-                    let rows = document.querySelector("tbody");
-                    links.forEach(link => {
-                        rows.append(row(link));
-                    });
-                }
             }
+        }
 
-            //get one link
-            async function getLink(id){
-                const response = await fetch("/api/links/" + id, {
-                    method: "GET",
-                    headers: { "Accept": "application/json" }
-                });
-                if (response.ok == true){
-                    const link = await response.json();
-                    const form = document.forms["linkForm"];
-                    form.elements["id"].value = link.id;
-                    form.elements["link"].value = link.link;
-                    form.elements["rating"].value = link.rating;
+        //get one link
+        async function getLink(id) {
+            const response = await fetch("/api/links/" + id, {
+                method: "GET",
+                headers: { "Accept": "application/json" }
+            });
+            if (response.ok == true) {
+                const link = await response.json();
+                const form = document.forms["linkForm"];
+                form.elements["id"].value = link.id;
+                form.elements["link"].value = link.link;
+                //form.elements["rating"].value = link.rating;
 
-                }
             }
+        }
 
-            //add link
-            async function createLink(linkLink, linkRating) {
-                const response = await fetch("/api/links", {
-                    method: "POST",
-                    headers: { "Accept": "application/json", "Content-Type": "application/json" },
-                    body: JSON.stringify({
-                        link: linkLink,
-                        rating: parseInt(linkRating, 10)
-                    })
-                });
-                if (response.ok == true){
-                    var link = await response.json();
-                    console.log("1 " + link);
-                    console.log("2 " + link.id + link.link + link.rating);
-                    for (var i=0; i<link.length; i++){
-                        if (link[i].link == linkLink && link[i].rating == linkRating){
+        //add link kekw
+        async function createLink(linkLink, linkRating) {
+            const response = await fetch("/api/links", {
+                method: "POST",
+                headers: { "Accept": "application/json", "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    link: linkLink,
+                    rating: parseInt(linkRating, 10)
+                })
+            });
+            if (response.ok == true) {
+                var link = await response.json();
+                //console.log("1 " + link);
+                //console.log("2 " + link.id + link.link + link.rating);
+                for (var i = 0; i < link.length; i++) {
+
+                    if (link[i].link == linkLink && link[i].rating == linkRating && linkRating != null) {
+                        link = link[i];
+                    }
+                    else {
+                        if (link[i].link == linkLink) {
                             link = link[i];
                         }
                     }
-                    reset();
-                    document.querySelector("tbody").append(row(link));
                 }
-            }
-
-            //edit link function
-            async function editLink(linkId, linkLink, linkRating){
-                const response = await fetch("/api/links", {
-                    method: "PUT",
-                    headers: {"Accept": "application/json", "Content-Type": "application/json" },
-                    body: JSON.stringify({
-                        id: linkId,
-                        link: linkLink,
-                        rating: parseInt(linkRating, 10)
-                    })
-                });
-
-                if (response.ok == true){
-                    const link = await response.json();
-                    reset();
-                    document.querySelector("tr[data-rowid='" + link.id + "']").replaceWith(row(link));
-                }
-            }
-
-            //delete link function
-            async function deleteLink(id){
-                const response = await fetch("/api/links/"+id, {
-                    method: "DELETE",
-                    headers: {"Accept": "application/json" }
-                });
-                if (response.ok == true){
-                    const link = await response.json();
-                    document.querySelector("tr[data-rowid='" + link.id + "']").remove();
-                }
-            }
-
-            //reset function
-            function reset(){
-                const form = document.forms["linkForm"];
-                form.reset();
-                form.elements["id"].value = 0;
-            }
-
-            //function for 1 row
-            function row(link) {
-
-                const tr = document.createElement("tr");
-                tr.setAttribute("data-rowid", link.id);
-  
-                const idTd = document.createElement("td");
-                idTd.append(link.id);
-                tr.append(idTd);
-    
-                const linkTd = document.createElement("td");
-                const linkHref = document.createElement("a");
-                linkHref.append(link.link);
-                linkHref.href = link.link;
-                linkHref.target = "_blank";
-                linkTd.appendChild(linkHref);
-                tr.append(linkTd);
-    
-                const ratingTd = document.createElement("td");
-                ratingTd.append(link.rating);
-                tr.append(ratingTd);
-                
-                const linksTd = document.createElement("td");
-                //edit link button
-
-                const editLink = document.createElement("a");
-                editLink.setAttribute("data-id", link.id);
-                editLink.setAttribute("style", "cursor:pointer;padding:15px;");
-                editLink.append("Изменить");
-                editLink.addEventListener("click", e => {
-    
-                    e.preventDefault();
-                    getLink(link.id);
-                });
-                linksTd.append(editLink);
-
-                //remove link button
-
-                const removeLink = document.createElement("a");
-                removeLink.setAttribute("data-id", link.id);
-                removeLink.setAttribute("style", "cursor:pointer;padding:15px;");
-                removeLink.append("Удалить");
-                removeLink.addEventListener("click", e => {
-    
-                    e.preventDefault();
-                    deleteLink(link.id);
-                });
-    
-                linksTd.append(removeLink);
-                tr.appendChild(linksTd);
-
-                //add rating
-
-                //decrease rating
-
-    
-                return tr;
-            }
-
-            //reset form data
-            document.getElementById("reset").addEventListener("click", e=>{
-                e.preventDefault();
                 reset();
-            })
+                document.querySelector("tbody").append(row(link));
+            }
+        }
 
-            //submit form
-            document.forms["linkForm"].addEventListener("submit", e => {
-                console.log("submit button");
+        //edit link function
+        async function editLink(linkId, linkLink, linkRating) {
+            const response = await fetch("/api/links", {
+                method: "PUT",
+                headers: { "Accept": "application/json", "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    id: linkId,
+                    link: linkLink,
+                    rating: parseInt(linkRating, 10)
+                })
+            });
+
+            if (response.ok == true) {
+                const link = await response.json();
+                reset();
+                document.querySelector("tr[data-rowid='" + link.id + "']").replaceWith(row(link));
+            }
+        }
+
+        //delete link function
+        async function deleteLink(id) {
+            const response = await fetch("/api/links/" + id, {
+                method: "DELETE",
+                headers: { "Accept": "application/json" }
+            });
+            if (response.ok == true) {
+                const link = await response.json();
+                document.querySelector("tr[data-rowid='" + link.id + "']").remove();
+            }
+        }
+
+        //increase rating function
+        async function incrRating(meth, linkId) {
+            // const response = await fetch("/api/links/" + linkId, {
+            //     method: "PUT",
+            //     headers: { "Accept": "application/json", "Content-Type": "application/json" },
+            //     body: JSON.stringify({
+            //         id: linkId
+            //     })
+            // });
+            // if (response.ok == true) {
+            //     const link = await respose.json();
+            //     document.querySelector("td/a[data-id'" + link.id + "']").replaceWith(row(link));
+            // }
+            console.log(`${meth}: id - ${linkId}`);
+        }
+
+        //decrease rating function
+
+        async function decrRating(meth, linkId) {
+            console.log(`${meth}: id - ${linkId}`);
+        }
+
+        //reset function
+        function reset() {
+            const form = document.forms["linkForm"];
+            form.reset();
+            form.elements["id"].value = 0;
+        }
+
+        //function for 1 row
+        function row(link) {
+
+            const tr = document.createElement("tr");
+            tr.setAttribute("data-rowid", link.id);
+
+            const idTd = document.createElement("td");
+            idTd.append(link.id);
+            tr.append(idTd);
+
+            const linkTd = document.createElement("td");
+            const linkHref = document.createElement("a");
+            linkHref.append(link.link);
+            linkHref.href = link.link;
+            linkHref.target = "_blank";
+            linkTd.appendChild(linkHref);
+            tr.append(linkTd);
+
+            const ratingTd = document.createElement("td");
+            ratingTd.setAttribute("data-id", link.id);
+            ratingTd.setAttribute("style", "width: 10%;")
+            ratingTd.append(link.rating);
+
+            //increaseRating button
+            const increaseRating = document.createElement("a");
+            increaseRating.setAttribute("data-id", link.id);
+            increaseRating.setAttribute("style", " cursor:pointer;padding:15px;");
+            increaseRating.append("Увел");
+            increaseRating.addEventListener("click", e => {
                 e.preventDefault();
-                const form = document.forms["linkForm"];
-                const id = form.elements["id"].value;
-                const link = form.elements["link"].value;
-                const rating = form.elements["rating"].value;
-                if (id == 0){
-                    createLink(link, rating);
-                }
-                else{
-                    editLink(id, link, rating);
-                }
-                
+                incrRating("increase", link.id);
             })
 
 
-            
+            //decreaseRating button
+            const decreaseRating = document.createElement("a");
+            decreaseRating.setAttribute("data-id", link.id);
+            decreaseRating.setAttribute("style", " cursor:pointer;padding:15px;");
+            decreaseRating.append("Умень");
+            decreaseRating.addEventListener("click", e => {
+                e.preventDefault();
+                decrRating("decrease", link.id);
+            })
 
 
-            getLinks();
-        </script>
-    </body>
+            ratingTd.append(increaseRating);
+            ratingTd.append(decreaseRating);
+
+            tr.append(ratingTd);
+
+            const linksTd = document.createElement("td");
+            //edit link button
+
+            const editLink = document.createElement("a");
+            editLink.setAttribute("data-id", link.id);
+            editLink.setAttribute("style", "cursor:pointer;padding:15px;");
+            editLink.append("Изменить");
+            editLink.addEventListener("click", e => {
+
+                e.preventDefault();
+                getLink(link.id);
+            });
+            linksTd.append(editLink);
+
+            //remove link button
+
+            const removeLink = document.createElement("a");
+            removeLink.setAttribute("data-id", link.id);
+            removeLink.setAttribute("style", "cursor:pointer;padding:15px;");
+            removeLink.append("Удалить");
+            removeLink.addEventListener("click", e => {
+
+                e.preventDefault();
+                deleteLink(link.id);
+            });
+
+            linksTd.append(removeLink);
+
+
+            tr.appendChild(linksTd);
+            return tr;
+        }
+
+        //reset form data
+        document.getElementById("reset").addEventListener("click", e => {
+            e.preventDefault();
+            reset();
+        })
+
+        //submit form
+        document.forms["linkForm"].addEventListener("submit", e => {
+            e.preventDefault();
+            const form = document.forms["linkForm"];
+            const id = form.elements["id"].value;
+            const link = form.elements["link"].value;
+            const rating = form.elements["rating"].value;
+            if (id == 0) {
+                createLink(link, rating);
+            }
+            else {
+                editLink(id, link, rating);
+            }
+
+        })
+
+
+
+
+
+        getLinks();
+    </script>
+</body>
+
 </html>
